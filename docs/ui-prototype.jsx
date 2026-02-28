@@ -1,0 +1,469 @@
+import React, { useState, useEffect } from 'react';
+import {
+    ArrowBigUp,
+    ArrowBigDown,
+    Download,
+    Monitor,
+    Smartphone,
+    Gamepad2,
+    Globe,
+    Sparkles,
+    Search,
+    TrendingUp,
+    Clock,
+    Award,
+    Filter,
+    Cpu,
+    MessageSquare,
+    AppWindow
+} from 'lucide-react';
+
+// --- MOCK DATA ---
+const initialProjects = [
+    {
+        id: 1,
+        title: "Neon Protocol: Awakened",
+        developer: "Polymath Studios",
+        category: "Game",
+        genre: "Action",
+        type: "AAA",
+        platforms: ["PC"],
+        os: ["Windows", "macOS"],
+        aiFeatures: ["Agentic NPCs", "Procedural Narrative"],
+        downloads: 1250430,
+        score: 14500,
+        timeAgo: "2 hours ago",
+        price: "$59.99",
+        image: "bg-gradient-to-br from-purple-600 to-blue-900",
+        description: "A massive cyberpunk RPG where every NPC has an autonomous routine and long-term memory driven by a custom LLaMA-4 model.",
+        userVote: 0
+    },
+    {
+        id: 2,
+        title: "Pocket Romantic Agent",
+        developer: "Loneliness Econ Apps",
+        category: "Game",
+        genre: "Simulation",
+        type: "Mobile",
+        platforms: ["Mobile"],
+        os: ["iOS", "Android"],
+        aiFeatures: ["Memory-First AI", "Emotional Voice Synthesis"],
+        downloads: 3400000,
+        score: 8900,
+        timeAgo: "5 hours ago",
+        price: "Free (IAP)",
+        image: "bg-gradient-to-br from-pink-500 to-rose-400",
+        description: "The #1 AI companion game. Form a deep emotional bond with an agent that remembers every conversation across thousands of sessions.",
+        userVote: 0
+    },
+    {
+        id: 3,
+        title: "AutoTax & Finance LAM",
+        developer: "FinTech AI",
+        category: "App",
+        genre: "Finance",
+        type: "Utility",
+        platforms: ["PC", "Web"],
+        os: ["Windows", "macOS", "Web"],
+        aiFeatures: ["Large Action Model", "Secure Local Exec"],
+        downloads: 85000,
+        score: 12400,
+        timeAgo: "1 hour ago",
+        price: "Free + API Costs",
+        image: "bg-gradient-to-br from-emerald-700 to-slate-900",
+        description: "A Large Action Model application that securely reads your financial documents and autonomously files your taxes. BYOK required for privacy.",
+        userVote: 0
+    },
+    {
+        id: 4,
+        title: "Galactic Trade Syndicate",
+        developer: "DePIN Gaming",
+        category: "Game",
+        genre: "Simulation",
+        type: "Indie",
+        platforms: ["PC"],
+        os: ["Windows", "Linux"],
+        aiFeatures: ["Decentralized Compute", "LAM Economy"],
+        downloads: 42000,
+        score: 3100,
+        timeAgo: "12 hours ago",
+        price: "$14.99",
+        image: "bg-gradient-to-br from-emerald-600 to-teal-900",
+        description: "A space trading simulator where the global economy is run by Large Action Models (LAMs) trading against each other in real-time.",
+        userVote: 0
+    },
+    {
+        id: 5,
+        title: "NeuroDraft Pro",
+        developer: "WriteTech AI",
+        category: "App",
+        genre: "Productivity",
+        type: "Productivity",
+        platforms: ["PC", "Web"],
+        os: ["macOS", "Windows", "Web"],
+        aiFeatures: ["Contextual Memory", "Auto-Research"],
+        downloads: 312000,
+        score: 10500,
+        timeAgo: "1 day ago",
+        price: "$9.99/mo",
+        image: "bg-gradient-to-br from-cyan-700 to-blue-900",
+        description: "The ultimate word processor. The AI reads your entire project folder and suggests edits, plots, and research notes in real-time.",
+        userVote: 0
+    },
+    {
+        id: 6,
+        title: "Local Detective: SLM Edition",
+        developer: "PrivacyFirst Games",
+        category: "Game",
+        genre: "Mystery",
+        type: "AA",
+        platforms: ["PC"],
+        os: ["Windows", "Linux"],
+        aiFeatures: ["Local SLM", "No Cloud Processing"],
+        downloads: 210000,
+        score: 9800,
+        timeAgo: "3 hours ago",
+        price: "$19.99",
+        image: "bg-gradient-to-br from-slate-700 to-indigo-900",
+        description: "A noir detective game where you interrogate suspects by speaking into your mic. Runs entirely locally on an RTX 4000+ GPU using a Small Language Model.",
+        userVote: 0
+    }
+];
+
+// --- HELPER COMPONENTS ---
+
+const PlatformIcon = ({ platform }) => {
+    switch (platform) {
+        case 'PC': return <Monitor size={14} className="text-blue-400" title="PC" />;
+        case 'Console': return <Gamepad2 size={14} className="text-green-400" title="Console" />;
+        case 'Mobile': return <Smartphone size={14} className="text-yellow-400" title="Mobile" />;
+        case 'Web': return <Globe size={14} className="text-purple-400" title="Web" />;
+        default: return null;
+    }
+};
+
+const formatNumber = (num) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+};
+
+const getPriceSubtext = (price) => {
+    if (price.includes('IAP')) return 'Includes In-App Purchases';
+    if (price.includes('API')) return 'Bring your own API Key';
+    if (price.includes('/mo')) return 'Billed through AI by You';
+    if (price.includes('Ads')) return 'Ad-supported';
+    return 'One-time purchase';
+};
+
+// --- MAIN APP COMPONENT ---
+
+export default function App() {
+    const [projects, setProjects] = useState(initialProjects);
+    const [sortBy, setSortBy] = useState('hot'); // 'hot', 'top', 'new'
+
+    // Reddit-style voting logic
+    const handleVote = (id, voteType) => {
+        setProjects(projects.map(project => {
+            if (project.id === id) {
+                let newScore = project.score;
+                let newUserVote = voteType;
+
+                // If clicking the same vote button, undo the vote
+                if (project.userVote === voteType) {
+                    newScore -= voteType;
+                    newUserVote = 0;
+                }
+                // If switching vote (e.g., from up to down)
+                else if (project.userVote !== 0) {
+                    newScore += (voteType * 2); // Reverse previous and apply new
+                }
+                // Fresh vote
+                else {
+                    newScore += voteType;
+                }
+
+                return { ...project, score: newScore, userVote: newUserVote };
+            }
+            return project;
+        }));
+    };
+
+    // Sorting logic
+    const sortedProjects = [...projects].sort((a, b) => {
+        if (sortBy === 'top') return b.score - a.score;
+        // Mock "Hot" algorithm (Score + some weight for newer posts, simplified here)
+        if (sortBy === 'hot') {
+            const weightA = a.timeAgo.includes('hour') ? 5000 : 0;
+            const weightB = b.timeAgo.includes('hour') ? 5000 : 0;
+            return (b.score + weightB) - (a.score + weightA);
+        }
+        // Mock "New" algorithm based on time string
+        if (sortBy === 'new') {
+            const getHours = (str) => {
+                if (str.includes('min')) return 0;
+                if (str.includes('hour')) return parseInt(str);
+                if (str.includes('day')) return parseInt(str) * 24;
+                return 99;
+            };
+            return getHours(a.timeAgo) - getHours(b.timeAgo);
+        }
+        return 0;
+    });
+
+    return (
+        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-900">
+
+            {/* NAVBAR */}
+            <nav className="sticky top-0 z-50 bg-slate-900 border-b border-slate-800 shadow-lg">
+                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="bg-gradient-to-br from-cyan-400 to-blue-600 p-2 rounded-lg">
+                            <Cpu className="text-slate-950" size={24} />
+                        </div>
+                        <span className="text-xl font-black tracking-tight text-white hidden sm:block">
+                            AI <span className="text-cyan-400">by You</span>
+                        </span>
+                    </div>
+
+                    <div className="flex-1 max-w-2xl mx-8">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search by app, game, AI model (e.g. LLaMA)..."
+                                className="w-full bg-slate-950 border border-slate-700 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-slate-500"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <button className="hidden md:flex items-center gap-2 text-sm font-semibold bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-full transition-colors border border-slate-700">
+                            <UploadIcon /> Upload Project
+                        </button>
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 border-2 border-slate-800 cursor-pointer"></div>
+                    </div>
+                </div>
+            </nav>
+
+            <main className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+                {/* LEFT/MAIN FEED */}
+                <div className="lg:col-span-3 space-y-4">
+
+                    {/* SORTING BAR */}
+                    <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 flex items-center gap-2 overflow-x-auto">
+                        <SortButton
+                            active={sortBy === 'hot'}
+                            onClick={() => setSortBy('hot')}
+                            icon={<TrendingUp size={18} />}
+                            label="Hot"
+                        />
+                        <SortButton
+                            active={sortBy === 'top'}
+                            onClick={() => setSortBy('top')}
+                            icon={<Award size={18} />}
+                            label="Top Ranked"
+                        />
+                        <SortButton
+                            active={sortBy === 'new'}
+                            onClick={() => setSortBy('new')}
+                            icon={<Clock size={18} />}
+                            label="New Arrivals"
+                        />
+
+                        <div className="h-6 w-px bg-slate-700 mx-2"></div>
+
+                        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 transition-colors ml-auto">
+                            <Filter size={16} /> Filters
+                        </button>
+                    </div>
+
+                    {/* PROJECT LIST */}
+                    <div className="space-y-4">
+                        {sortedProjects.map((project, index) => (
+                            <div key={project.id} className="bg-slate-900 rounded-xl border border-slate-800 hover:border-slate-700 transition-all flex flex-col sm:flex-row overflow-hidden shadow-sm hover:shadow-cyan-900/10 hover:shadow-lg group">
+
+                                {/* UPVOTE COLUMN */}
+                                <div className="bg-slate-900/50 sm:w-16 flex flex-row sm:flex-col items-center justify-center sm:justify-start py-3 px-4 sm:p-4 border-b sm:border-b-0 sm:border-r border-slate-800 gap-2 sm:gap-1">
+                                    <button
+                                        onClick={() => handleVote(project.id, 1)}
+                                        className={`p-1 rounded transition-colors ${project.userVote === 1 ? 'text-orange-500 bg-orange-500/10' : 'text-slate-400 hover:text-orange-500 hover:bg-slate-800'}`}
+                                    >
+                                        <ArrowBigUp size={24} className={project.userVote === 1 ? "fill-current" : ""} />
+                                    </button>
+                                    <span className={`font-bold text-sm ${project.userVote === 1 ? 'text-orange-500' : project.userVote === -1 ? 'text-cyan-500' : 'text-slate-200'}`}>
+                                        {formatNumber(project.score)}
+                                    </span>
+                                    <button
+                                        onClick={() => handleVote(project.id, -1)}
+                                        className={`p-1 rounded transition-colors ${project.userVote === -1 ? 'text-cyan-500 bg-cyan-500/10' : 'text-slate-400 hover:text-cyan-500 hover:bg-slate-800'}`}
+                                    >
+                                        <ArrowBigDown size={24} className={project.userVote === -1 ? "fill-current" : ""} />
+                                    </button>
+                                </div>
+
+                                {/* PROJECT CONTENT */}
+                                <div className="flex-1 p-4 flex flex-col sm:flex-row gap-4">
+                                    {/* Thumbnail Placeholder */}
+                                    <div className={`w-full sm:w-40 h-32 rounded-lg ${project.image} flex items-center justify-center shadow-inner flex-shrink-0 relative overflow-hidden group-hover:scale-[1.02] transition-transform`}>
+                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                                        {project.category === "App" ? (
+                                            <AppWindow size={32} className="text-white/50 relative z-10" />
+                                        ) : (
+                                            <Gamepad2 size={32} className="text-white/50 relative z-10" />
+                                        )}
+                                    </div>
+
+                                    {/* Details */}
+                                    <div className="flex-1 flex flex-col">
+                                        <div className="flex items-start justify-between mb-1">
+                                            <div>
+                                                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                                    {project.title}
+                                                    <span className="text-[10px] uppercase tracking-wider bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">
+                                                        {project.category}
+                                                    </span>
+                                                    <span className="text-[10px] uppercase tracking-wider bg-cyan-900/30 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800">
+                                                        {project.genre}
+                                                    </span>
+                                                    {project.type === 'AAA' && <span className="text-[10px] uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded border border-purple-500/30">AAA</span>}
+                                                </h2>
+                                                <div className="text-xs text-slate-400 flex items-center gap-2 mt-1">
+                                                    <span className="font-medium text-slate-300">{project.developer}</span>
+                                                    <span>•</span>
+                                                    <span>{project.timeAgo}</span>
+                                                </div>
+                                            </div>
+
+                                            {/* Platforms & OS Top Right */}
+                                            <div className="flex flex-col items-end gap-1.5">
+                                                <div className="flex gap-1.5 bg-slate-950 p-1.5 rounded-md border border-slate-800">
+                                                    {project.platforms.map(p => <PlatformIcon key={p} platform={p} />)}
+                                                </div>
+                                                <div className="flex flex-wrap justify-end gap-1">
+                                                    {project.os.map(o => (
+                                                        <span key={o} className="text-[9px] uppercase tracking-wider bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
+                                                            {o}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-sm text-slate-400 line-clamp-2 mt-2 mb-3 flex-1">
+                                            {project.description}
+                                        </p>
+
+                                        {/* Tags & Action */}
+                                        <div className="flex flex-wrap items-end justify-between gap-3 mt-auto pt-2 border-t border-slate-800/50">
+                                            <div className="flex flex-wrap gap-2 pb-1">
+                                                {project.aiFeatures.map((feature, i) => (
+                                                    <span key={i} className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md bg-cyan-900/20 text-cyan-400 border border-cyan-800/30">
+                                                        <Sparkles size={10} />
+                                                        {feature}
+                                                    </span>
+                                                ))}
+                                            </div>
+
+                                            <div className="flex flex-col items-end w-full sm:w-auto mt-2 sm:mt-0">
+                                                <div className="flex items-center gap-4 text-sm">
+                                                    <div className="flex items-center gap-1.5 text-slate-400 mr-2" title="Downloads / Installs">
+                                                        <Download size={14} />
+                                                        <span className="font-medium">{formatNumber(project.downloads)}</span>
+                                                    </div>
+                                                    <button className="flex-1 sm:flex-none bg-slate-100 hover:bg-white text-slate-900 font-semibold px-4 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
+                                                        {project.price === 'Free (Ads)' ? 'Play Free' : project.price}
+                                                    </button>
+                                                </div>
+                                                <span className="text-[10px] text-slate-500 mt-1.5 mr-1 text-right">
+                                                    {getPriceSubtext(project.price)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* RIGHT SIDEBAR */}
+                <div className="hidden lg:block space-y-6">
+
+                    {/* Curation Module Card */}
+                    <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 shadow-lg">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="bg-orange-500/20 p-1.5 rounded text-orange-400">
+                                <Award size={18} />
+                            </div>
+                            <h3 className="font-bold text-white">LMArena Curator</h3>
+                        </div>
+                        <p className="text-sm text-slate-400 mb-4">
+                            Help us filter the noise. Play two anonymous AI levels and vote for the best to improve the ranking algorithm.
+                        </p>
+                        <button className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-lg transition-colors text-sm shadow-[0_0_15px_rgba(8,145,178,0.4)]">
+                            Enter the Arena
+                        </button>
+                    </div>
+
+                    {/* Trending Tags */}
+                    <div className="bg-slate-900 rounded-xl border border-slate-800 p-5">
+                        <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+                            <TrendingUp size={16} className="text-slate-400" /> Trending Tech
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            <SidebarTag label="BYOK Enabled" count="4.2k" />
+                            <SidebarTag label="LLaMA-4 Driven" count="1.8k" />
+                            <SidebarTag label="Agentic Economy" count="950" />
+                            <SidebarTag label="Local SLM" count="3.1k" />
+                            <SidebarTag label="DePIN Compute" count="420" />
+                        </div>
+                    </div>
+
+                    {/* Community Highlight */}
+                    <div className="bg-slate-900 rounded-xl border border-slate-800 p-5">
+                        <h3 className="font-bold text-white mb-3 text-sm uppercase tracking-wider text-slate-500">
+                            Community Notice
+                        </h3>
+                        <p className="text-xs text-slate-400 leading-relaxed mb-3">
+                            Per the Jan 2026 Developer Update, games utilizing pure AI-generation without substantial human curation will be heavily penalized by the "Hot" algorithm to combat gameslop.
+                        </p>
+                        <a href="#" className="text-xs text-cyan-400 hover:underline">Read the full platform policy →</a>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    );
+}
+
+// --- SUB COMPONENTS ---
+
+const SortButton = ({ active, onClick, icon, label }) => (
+    <button
+        onClick={onClick}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${active
+                ? 'bg-slate-800 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
+            }`}
+    >
+        {icon}
+        {label}
+    </button>
+);
+
+const SidebarTag = ({ label, count }) => (
+    <div className="flex items-center justify-between w-full p-2 rounded hover:bg-slate-800 transition-colors cursor-pointer group">
+        <span className="text-sm font-medium text-slate-300 group-hover:text-cyan-400 transition-colors">{label}</span>
+        <span className="text-xs bg-slate-950 px-2 py-1 rounded text-slate-500 border border-slate-800">{count}</span>
+    </div>
+);
+
+const UploadIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" x2="12" y1="3" y2="15" />
+    </svg>
+);
