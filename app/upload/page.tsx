@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Navbar } from '@/components/Navbar';
 import { createClient } from '@/utils/supabase/client';
 import { CheckCircle, ChevronRight, ChevronLeft, Upload, Loader2 } from 'lucide-react';
@@ -195,7 +196,7 @@ export default function UploadPage() {
                                     <input type="file" accept="image/png, image/jpeg, image/webp" onChange={handleImageChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
 
                                     {imagePreview ? (
-                                        <img src={imagePreview} alt="Preview" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity z-10" />
+                                        <Image src={imagePreview} alt="Preview" fill className="object-cover opacity-60 group-hover:opacity-40 transition-opacity z-10" unoptimized />
                                     ) : (
                                         <>
                                             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform group-hover:bg-cyan-900/50 group-hover:text-cyan-400 text-slate-400">

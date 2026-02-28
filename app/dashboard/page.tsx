@@ -8,7 +8,7 @@ export default async function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     // Fetch user's projects with their metrics
-    const { data: projects, error } = await supabase
+    const { data: projects } = await supabase
         .from('projects')
         .select(`
             id, title, category, created_at,
@@ -100,10 +100,10 @@ export default async function DashboardPage() {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <button className="p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors border border-transparent hover:border-slate-600" title="Edit Project">
+                                        <button disabled className="p-2 text-slate-500 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors border border-transparent cursor-not-allowed" title="Editing coming soon in v1.1">
                                             <Edit2 size={18} />
                                         </button>
-                                        <button className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-950 rounded-lg transition-colors border border-transparent hover:border-rose-900/50" title="Delete Project">
+                                        <button disabled className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-950/50 rounded-lg transition-colors border border-transparent cursor-not-allowed" title="Deletion coming soon in v1.1">
                                             <Trash2 size={18} />
                                         </button>
                                     </div>
