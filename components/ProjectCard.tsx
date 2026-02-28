@@ -47,17 +47,21 @@ export const ProjectCard = ({ project, onVote }: ProjectCardProps) => {
                 <button
                     onClick={() => onVote(project.id, 1)}
                     className={`p-1 rounded transition-colors ${project.user_vote === 1 ? 'text-orange-500 bg-orange-500/10' : 'text-slate-400 hover:text-orange-500 hover:bg-slate-800'}`}
+                    aria-label="Upvote project"
+                    title="Upvote"
                 >
-                    <ArrowBigUp size={24} className={project.user_vote === 1 ? "fill-current" : ""} />
+                    <ArrowBigUp size={24} className={project.user_vote === 1 ? "fill-current" : ""} aria-hidden="true" />
                 </button>
-                <span className={`font-bold text-sm ${project.user_vote === 1 ? 'text-orange-500' : project.user_vote === -1 ? 'text-cyan-500' : 'text-slate-200'}`}>
+                <span className={`font-bold text-sm ${project.user_vote === 1 ? 'text-orange-500' : project.user_vote === -1 ? 'text-cyan-500' : 'text-slate-200'}`} aria-live="polite">
                     {formatNumber(project.score)}
                 </span>
                 <button
                     onClick={() => onVote(project.id, -1)}
                     className={`p-1 rounded transition-colors ${project.user_vote === -1 ? 'text-cyan-500 bg-cyan-500/10' : 'text-slate-400 hover:text-cyan-500 hover:bg-slate-800'}`}
+                    aria-label="Downvote project"
+                    title="Downvote"
                 >
-                    <ArrowBigDown size={24} className={project.user_vote === -1 ? "fill-current" : ""} />
+                    <ArrowBigDown size={24} className={project.user_vote === -1 ? "fill-current" : ""} aria-hidden="true" />
                 </button>
             </div>
 
