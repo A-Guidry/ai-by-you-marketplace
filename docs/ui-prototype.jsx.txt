@@ -399,9 +399,7 @@ export default function App() {
                             </div>
                             <h3 className="font-bold text-white">LMArena Curator</h3>
                         </div>
-                        <p className="text-sm text-slate-400 mb-4">
-                            Help us filter the noise. Play two anonymous AI levels and vote for the best to improve the ranking algorithm.
-                        </p>
+                        <p className="text-slate-400 max-w-sm mt-2">Help shape the future of AI gaming by telling us what you&apos;re looking for or reading what we&apos;re building next.</p>
                         <button className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-lg transition-colors text-sm shadow-[0_0_15px_rgba(8,145,178,0.4)]">
                             Enter the Arena
                         </button>
@@ -444,8 +442,8 @@ const SortButton = ({ active, onClick, icon, label }) => (
     <button
         onClick={onClick}
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${active
-                ? 'bg-slate-800 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
+            ? 'bg-slate-800 text-white shadow-sm'
+            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
             }`}
     >
         {icon}

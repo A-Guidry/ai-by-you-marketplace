@@ -11,24 +11,13 @@ interface SortingBarProps {
 export const SortingBar = ({ sortBy, setSortBy, onToggleFilters, activeFiltersCount }: SortingBarProps) => {
     return (
         <div className="bg-slate-900 p-2 rounded-xl border border-slate-800 flex items-center gap-2 overflow-x-auto">
-            <SortButton
-                active={sortBy === 'hot'}
-                onClick={() => setSortBy('hot')}
-                icon={<TrendingUp size={18} />}
-                label="Hot"
-            />
-            <SortButton
-                active={sortBy === 'top'}
-                onClick={() => setSortBy('top')}
-                icon={<Award size={18} />}
-                label="Top Ranked"
-            />
-            <SortButton
-                active={sortBy === 'new'}
-                onClick={() => setSortBy('new')}
-                icon={<Clock size={18} />}
-                label="New Arrivals"
-            />
+            <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1 shadow-lg overflow-x-auto no-scrollbar">
+                <SortButton active={sortBy === 'hot'} onClick={() => setSortBy('hot')} icon={<TrendingUp size={16} />} label="Hot" />
+                <SortButton active={sortBy === 'top'} onClick={() => setSortBy('top')} icon={<Award size={16} />} label="Top Ranked" />
+                <SortButton active={sortBy === 'new'} onClick={() => setSortBy('new')} icon={<Clock size={16} />} label="New Arrivals" />
+                <div className="w-px bg-slate-800 my-2 mx-2"></div>
+                <SortButton active={sortBy === 'arena'} onClick={() => setSortBy('arena')} icon={<TrendingUp size={16} className="text-orange-400" />} label="Arena Leaders" />
+            </div>
 
             <div className="h-6 w-px bg-slate-700 mx-2"></div>
 

@@ -6,20 +6,25 @@ import { formatDistanceToNow } from 'date-fns';
 export interface ProjectData {
     id: number;
     title: string;
+    description: string;
     developer_name: string;
     category: string;
+    platforms: string[];
+    "aiFeatures": string[];
+    image_url: string;
+    price_model: string;
+    user_vote?: number;
+    score: number;
+    elo_score?: number;
+    created_at: string;
+    // The following fields were present in the original interface but not in the provided update snippet's main body.
+    // Assuming the instruction intended to remove them unless they were part of the duplicated block.
+    // Given the duplicated block, it seems the intention was to re-include them.
+    // Re-integrating them to maintain a complete and syntactically correct interface.
     genre: string;
     type: string;
-    platforms: string[];
     os: string[];
-    aiFeatures: string[];
     downloads_count: number;
-    score: number;
-    created_at: string;
-    price_model: string;
-    image_url: string;
-    description: string;
-    user_vote?: number;
 }
 
 interface ProjectCardProps {
@@ -71,67 +76,62 @@ export const ProjectCard = ({ project, onVote }: ProjectCardProps) => {
                 {/* Details */}
                 <div className="flex-1 flex flex-col">
                     <div className="flex items-start justify-between mb-1">
-                        <div>
-                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                                {project.title}
-                                <span className="text-[10px] uppercase tracking-wider bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700">
-                                    {project.category}
-                                </span>
-                                <span className="text-[10px] uppercase tracking-wider bg-cyan-900/30 text-cyan-400 px-2 py-0.5 rounded border border-cyan-800">
-                                    {project.genre}
-                                </span>
-                                {project.type === 'AAA' && <span className="text-[10px] uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded border border-purple-500/30">AAA</span>}
-                            </h2>
-                            <div className="text-xs text-slate-400 flex items-center gap-2 mt-1">
-                                <span className="font-medium text-slate-300">{project.developer_name}</span>
-                                <span>•</span>
-                                <span>{timeAgo}</span>
+                        <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <h3 className="text-xl font-bold text-white tracking-tight leading-tight group-hover/card:text-cyan-400 transition-colors">
+                                    {project.title}
+                                </h3>
+                                <div className="text-xs text-slate-400 flex items-center gap-2 mt-1">
+                                    <span className="font-medium text-slate-300">{project.developer_name}</span>
+                                    <span>•</span>
+                                    <span>{timeAgo}</span>
+                                </div>
+                            </div>
+
+                            {/* Platforms & OS Top Right */}
+                            <div className="flex flex-col items-end gap-1.5">
+                                <div className="flex gap-1.5 bg-slate-950 p-1.5 rounded-md border border-slate-800">
+                                    {project.platforms?.map(p => <PlatformIcon key={p} platform={p} />)}
+                                </div>
+                                <div className="flex flex-wrap justify-end gap-1">
+                                    {project.os?.map(o => (
+                                        <span key={o} className="text-[9px] uppercase tracking-wider bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
+                                            {o}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Platforms & OS Top Right */}
-                        <div className="flex flex-col items-end gap-1.5">
-                            <div className="flex gap-1.5 bg-slate-950 p-1.5 rounded-md border border-slate-800">
-                                {project.platforms?.map(p => <PlatformIcon key={p} platform={p} />)}
-                            </div>
-                            <div className="flex flex-wrap justify-end gap-1">
-                                {project.os?.map(o => (
-                                    <span key={o} className="text-[9px] uppercase tracking-wider bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
-                                        {o}
+                        <p className="text-sm text-slate-400 line-clamp-2 mt-2 mb-3 flex-1">
+                            {project.description}
+                        </p>
+
+                        {/* Tags & Action */}
+                        <div className="flex flex-wrap items-end justify-between gap-3 mt-auto pt-2 border-t border-slate-800/50">
+                            <div className="flex flex-wrap gap-2 pb-1">
+                                {project.aiFeatures?.map((feature, i) => (
+                                    <span key={i} className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md bg-cyan-900/20 text-cyan-400 border border-cyan-800/30">
+                                        <Sparkles size={10} />
+                                        {feature}
                                     </span>
                                 ))}
                             </div>
-                        </div>
-                    </div>
 
-                    <p className="text-sm text-slate-400 line-clamp-2 mt-2 mb-3 flex-1">
-                        {project.description}
-                    </p>
-
-                    {/* Tags & Action */}
-                    <div className="flex flex-wrap items-end justify-between gap-3 mt-auto pt-2 border-t border-slate-800/50">
-                        <div className="flex flex-wrap gap-2 pb-1">
-                            {project.aiFeatures?.map((feature, i) => (
-                                <span key={i} className="flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-md bg-cyan-900/20 text-cyan-400 border border-cyan-800/30">
-                                    <Sparkles size={10} />
-                                    {feature}
-                                </span>
-                            ))}
-                        </div>
-
-                        <div className="flex flex-col items-end w-full sm:w-auto mt-2 sm:mt-0">
-                            <div className="flex items-center gap-4 text-sm">
-                                <div className="flex items-center gap-1.5 text-slate-400 mr-2" title="Downloads / Installs">
-                                    <Download size={14} />
-                                    <span className="font-medium">{formatNumber(project.downloads_count || 0)}</span>
+                            <div className="flex flex-col items-end w-full sm:w-auto mt-2 sm:mt-0">
+                                <div className="flex items-center gap-4 text-sm">
+                                    <div className="flex items-center gap-1.5 text-slate-400 mr-2" title="Downloads / Installs">
+                                        <Download size={14} />
+                                        <span className="font-medium">{formatNumber(project.downloads_count || 0)}</span>
+                                    </div>
+                                    <button className="flex-1 sm:flex-none bg-slate-100 hover:bg-white text-slate-900 font-semibold px-4 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
+                                        {project.price_model === 'Free (Ads)' ? 'Play Free' : project.price_model}
+                                    </button>
                                 </div>
-                                <button className="flex-1 sm:flex-none bg-slate-100 hover:bg-white text-slate-900 font-semibold px-4 py-1.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm shadow-sm">
-                                    {project.price_model === 'Free (Ads)' ? 'Play Free' : project.price_model}
-                                </button>
+                                <span className="text-[10px] text-slate-500 mt-1.5 mr-1 text-right">
+                                    {getPriceSubtext(project.price_model || '')}
+                                </span>
                             </div>
-                            <span className="text-[10px] text-slate-500 mt-1.5 mr-1 text-right">
-                                {getPriceSubtext(project.price_model || '')}
-                            </span>
                         </div>
                     </div>
                 </div>

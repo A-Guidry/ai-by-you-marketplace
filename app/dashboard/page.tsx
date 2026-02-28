@@ -43,14 +43,21 @@ export default async function DashboardPage() {
                                 <Plus size={32} className="text-slate-500" />
                             </div>
                             <h3 className="text-lg font-medium text-slate-300 mb-2">No projects yet</h3>
-                            <p className="text-slate-400 mb-6 max-w-sm">You haven't uploaded any games or apps to the marketplace. Start building your audience today.</p>
+                            <p className="text-slate-400 mb-6 max-w-sm">You haven&apos;t uploaded any games or apps to the marketplace. Start building your audience today.</p>
                             <Link href="/upload" className="bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-6 rounded-full transition-colors border border-slate-700">
                                 Upload Your First Project
                             </Link>
                         </div>
                     ) : (
                         <div className="divide-y divide-slate-800">
-                            {projects.map((project: any) => (
+                            {projects.map((project: {
+                                id: number;
+                                title: string;
+                                category: string;
+                                created_at: string;
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                metrics: any
+                            }) => (
                                 <div key={project.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-slate-800/30 transition-colors">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-1">
