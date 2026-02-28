@@ -1,8 +1,12 @@
 import { Award, TrendingUp } from 'lucide-react';
 import { SidebarTag } from './SidebarTag';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/server';
 
-export const Sidebar = () => {
+export const Sidebar = async () => {
+    const supabase = await createClient();
+    const { data: trendingTags } = await supabase.rpc('get_trending_tags');
+
     return (
         <div className="hidden lg:block space-y-6">
             {/* Curation Module Card */}
@@ -27,11 +31,13 @@ export const Sidebar = () => {
                     <TrendingUp size={16} className="text-slate-400" /> Trending Tech
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                    <SidebarTag label="BYOK Enabled" count="4.2k" />
-                    <SidebarTag label="LLaMA-4 Driven" count="1.8k" />
-                    <SidebarTag label="Agentic Economy" count="950" />
-                    <SidebarTag label="Local SLM" count="3.1k" />
-                    <SidebarTag label="DePIN Compute" count="420" />
+                    {trendingTags && trendingTags.length > 0 ? (
+                        trendingTags.map((tag: { feature: string; usage_count: number }) => (
+                            <SidebarTag key={tag.feature} label={tag.feature} count={tag.usage_count} />
+                        ))
+                    ) : (
+                        <p className="text-slate-500 text-xs text-center w-full border border-dashed border-slate-800 py-2 rounded">Not enough data to trend.</p>
+                    )}
                 </div>
             </div>
 

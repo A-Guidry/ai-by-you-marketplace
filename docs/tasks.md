@@ -106,23 +106,23 @@
 ## Phase 4: Advanced Curation & LMArena (Weeks 6–7)
 
 ### 4.1 LMArena MVP
-- [ ] Create `/arena` route and page
-- [ ] Build randomized matchmaking: pick 2 anonymous projects for comparison
-- [ ] Design side-by-side Arena UI (two project previews with "Vote A / Vote B")
-- [ ] Record arena votes in a new `arena_votes` table
-- [ ] Prevent the same user from rating the same pair twice
+- [x] Create `/arena` route and page
+- [x] Build randomized matchmaking: pick 2 anonymous projects for comparison
+- [x] Design side-by-side Arena UI (two project previews with "Vote A / Vote B")
+- [x] Record arena votes in a new `arena_votes` table
+- [x] Prevent the same user from rating the same pair twice
 
 ### 4.2 Elo Rating Backend
-- [ ] Implement Elo rating calculation function (K-factor, expected score, adjustment)
-- [ ] Update each project's Elo score after every arena vote
-- [ ] Surface Elo-based ranking in a new "Arena Ranked" sort option or leaderboard
-- [ ] Create an `/arena/leaderboard` view
+- [x] Implement Elo rating calculation function (K-factor, expected score, adjustment)
+- [x] Update each project's Elo score after every arena vote
+- [x] Surface Elo-based ranking in a new "Arena Ranked" sort option or leaderboard
+- [x] Create an `/arena/leaderboard` view (integrated into main feed as Arena Leaders)
 
 ### 4.3 Trending Tags
-- [ ] Create a backend function / cron job to aggregate `aiFeatures` popularity over the last 24 hours
-- [ ] Replace hardcoded `SidebarTag` data with dynamically fetched trending tags
-- [ ] Show tag counts based on real project data
-- [ ] Make tags clickable → filter feed by that AI feature
+- [x] Create a backend function / cron job to aggregate `aiFeatures` popularity over the last 24 hours
+- [x] Replace hardcoded `SidebarTag` data with dynamically fetched trending tags
+- [x] Show tag counts based on real project data
+- [x] Make tags clickable → filter feed by that AI feature
 
 ---
 
@@ -141,8 +141,8 @@
 - [ ] Implement rate limiting on vote and upload endpoints
 
 ### 5.3 Analytics & Monitoring
-- [ ] Integrate PostHog or Google Analytics
-- [ ] Track CTR on project cards, sort changes, filter usage
+- [x] Integrate PostHog or Google Analytics
+- [x] Track CTR on project cards, sort changes, filter usage
 - [ ] Set up error tracking (Sentry or similar)
 - [ ] Create a basic admin dashboard for platform metrics
 

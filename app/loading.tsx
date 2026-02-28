@@ -1,5 +1,4 @@
 import { Navbar } from '@/components/Navbar';
-import { Sidebar } from '@/components/Sidebar';
 import { ArrowBigUp, ArrowBigDown, Gamepad2 } from 'lucide-react';
 
 const SkeletonCard = () => (
@@ -82,7 +81,10 @@ export default function Loading() {
                         <SkeletonCard />
                     </div>
                 </div>
-                <Sidebar />
+                <div className="hidden lg:block space-y-6">
+                    <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 h-48 animate-pulse shadow-lg"></div>
+                    <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 h-64 animate-pulse"></div>
+                </div>
             </main>
         </div>
     );

@@ -16,6 +16,7 @@ export default async function Home({
     const currentPlatform = typeof resolvedParams.platform === 'string' ? resolvedParams.platform : null;
     const currentGenre = typeof resolvedParams.genre === 'string' ? resolvedParams.genre : null;
     const currentOs = typeof resolvedParams.os === 'string' ? resolvedParams.os : null;
+    const currentFeature = typeof resolvedParams.feature === 'string' ? resolvedParams.feature : null;
 
     // Fetch projects
     const { data: projects, error } = await supabase.rpc('get_projects', {
@@ -23,7 +24,8 @@ export default async function Home({
         p_category: currentCategory,
         p_platform: currentPlatform,
         p_genre: currentGenre,
-        p_os: currentOs
+        p_os: currentOs,
+        p_feature: currentFeature
     });
 
     if (error) {
